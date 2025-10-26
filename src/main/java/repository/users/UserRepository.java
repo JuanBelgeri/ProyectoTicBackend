@@ -1,14 +1,12 @@
-package repository;
+package repository.users;
 
-import entities.users.User;
+import model.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
-
-    // métodos por defecto como findById(), save(), deleteById(), etc.
+    Optional<User> findByEmail(String email);
     boolean existsByEmail(String email);
-    User findByEmail(String email);
 }
-
