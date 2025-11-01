@@ -9,11 +9,15 @@ import model.enums.UserRole;
 import service.users.UserService;
 import service.users.AddressService;
 import service.users.PaymentMethodService;
+import service.security.PasswordService;
+import service.security.CardValidationService;
+import security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -30,6 +34,15 @@ public class AuthController {
     @Autowired
     private PaymentMethodService paymentMethodService;
 
+    @Autowired
+    private PasswordService passwordService;
+
+    @Autowired
+    private CardValidationService cardValidationService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
     // Register new CLIENT
     @PostMapping("/register/client")
     public ResponseEntity<ApiResponse> registerClient(@RequestBody RegisterClientRequest request) {
@@ -40,6 +53,9 @@ public class AuthController {
                         .body(new ApiResponse(false, "Email already registered"));
             }
 
+            // Encrypt password
+            String encryptedPassword = passwordService.encryptPassword(request.getPassword());
+
             // Create new user
             User user = new User(
                     request.getEmail(),
@@ -49,35 +65,39 @@ public class AuthController {
                     request.getPhone(),
                     request.getBirthDate(),
                     UserRole.CLIENT,
-                    request.getPassword()
-                    // TTODO: Encrypt password with BCrypt
+                    encryptedPassword // Encrypted password
             );
 
             User savedUser = userService.createUser(user);
 
-            // Create address (required)
+            // Create address
             Address address = new Address(
                     savedUser.getEmail(),
                     request.getStreet(),
                     request.getNumber(),
                     request.getCity(),
                     request.getPostalCode(),
-                    true // First address is always main
+                    true
             );
             address.setApartment(request.getApartment());
             address.setAdditionalInfo(request.getAddressAdditionalInfo());
             addressService.createAddress(address);
 
-            // Create payment method (required for clients)
+            // Encrypt and create payment method
+            String encryptedCardNumber = cardValidationService.encryptCardNumber(request.getCardNumber());
+
             PaymentMethod paymentMethod = new PaymentMethod(
                     savedUser.getEmail(),
                     request.getPaymentType(),
-                    encryptCardNumber(request.getCardNumber()), // Encrypt card number
+                    encryptedCardNumber,
                     request.getCardHolder(),
                     request.getExpirationDate(),
-                    true // First payment method is always main
+                    true
             );
             paymentMethodService.createPaymentMethod(paymentMethod);
+
+            // Generate JWT token
+            String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole().toString());
 
             AuthResponse authResponse = new AuthResponse(
                     savedUser.getEmail(),
@@ -87,8 +107,13 @@ public class AuthController {
                     "Client registered successfully"
             );
 
+            // Return response with token
+            var responseData = new java.util.HashMap<String, Object>();
+            responseData.put("user", authResponse);
+            responseData.put("token", token);
+
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse(true, "Registration successful", authResponse));
+                    .body(new ApiResponse(true, "Registration successful", responseData));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -100,13 +125,14 @@ public class AuthController {
     @PostMapping("/register/admin")
     public ResponseEntity<ApiResponse> registerAdmin(@RequestBody RegisterAdminRequest request) {
         try {
-            // Check if user already exists
             if (userService.userExists(request.getEmail())) {
                 return ResponseEntity.status(HttpStatus.CONFLICT)
                         .body(new ApiResponse(false, "Email already registered"));
             }
 
-            // Create new admin user
+            // Encrypt password
+            String encryptedPassword = passwordService.encryptPassword(request.getPassword());
+
             User user = new User(
                     request.getEmail(),
                     request.getFirstName(),
@@ -115,25 +141,25 @@ public class AuthController {
                     request.getPhone(),
                     request.getBirthDate(),
                     UserRole.ADMIN,
-                    request.getPassword() // TTODO: Encrypt password with BCrypt
+                    encryptedPassword
             );
 
             User savedUser = userService.createUser(user);
 
-            // Create address (required)
             Address address = new Address(
                     savedUser.getEmail(),
                     request.getStreet(),
                     request.getNumber(),
                     request.getCity(),
                     request.getPostalCode(),
-                    true // First address is always main
+                    true
             );
             address.setApartment(request.getApartment());
             address.setAdditionalInfo(request.getAddressAdditionalInfo());
             addressService.createAddress(address);
 
-            // Note: No payment method for admins
+            // Generate JWT token
+            String token = jwtUtil.generateToken(savedUser.getEmail(), savedUser.getRole().toString());
 
             AuthResponse authResponse = new AuthResponse(
                     savedUser.getEmail(),
@@ -143,8 +169,12 @@ public class AuthController {
                     "Admin registered successfully"
             );
 
+            var responseData = new java.util.HashMap<String, Object>();
+            responseData.put("user", authResponse);
+            responseData.put("token", token);
+
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new ApiResponse(true, "Registration successful", authResponse));
+                    .body(new ApiResponse(true, "Registration successful", responseData));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -156,26 +186,29 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest request) {
         try {
-            // Validate credentials
-            if (!userService.validateCredentials(request.getEmail(), request.getPassword())) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ApiResponse(false, "Invalid email or password"));
-            }
-
             // Get user
             Optional<User> userOpt = userService.getUserByEmail(request.getEmail());
             if (userOpt.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ApiResponse(false, "User not found"));
+                        .body(new ApiResponse(false, "Invalid email or password"));
             }
 
             User user = userOpt.get();
+
+            // Verify password with BCrypt
+            if (!passwordService.verifyPassword(request.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponse(false, "Invalid email or password"));
+            }
 
             // Check if user is active
             if (!user.getActive()) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body(new ApiResponse(false, "Account is disabled"));
             }
+
+            // Generate JWT token
+            String token = jwtUtil.generateToken(user.getEmail(), user.getRole().toString());
 
             AuthResponse authResponse = new AuthResponse(
                     user.getEmail(),
@@ -185,7 +218,11 @@ public class AuthController {
                     "Login successful"
             );
 
-            return ResponseEntity.ok(new ApiResponse(true, "Login successful", authResponse));
+            var responseData = new java.util.HashMap<String, Object>();
+            responseData.put("user", authResponse);
+            responseData.put("token", token);
+
+            return ResponseEntity.ok(new ApiResponse(true, "Login successful", responseData));
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -193,19 +230,39 @@ public class AuthController {
         }
     }
 
-    // Logout (simple endpoint)
+    // Logout
     @PostMapping("/logout")
     public ResponseEntity<ApiResponse> logout() {
         return ResponseEntity.ok(new ApiResponse(true, "Logout successful"));
     }
 
-    // Helper method to encrypt card number (simple implementation)
-    private String encryptCardNumber(String cardNumber) {
-        // TTODO: Implement proper encryption
-        // For now, store only last 4 digits
-        if (cardNumber == null || cardNumber.length() < 4) {
-            return "****";
+    // Validate token
+    @PostMapping("/validate-token")
+    public ResponseEntity<ApiResponse> validateToken(@RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponse(false, "Invalid token format"));
+            }
+
+            String token = authHeader.substring(7);
+            String email = jwtUtil.extractEmail(token);
+            String role = jwtUtil.extractRole(token);
+
+            if (jwtUtil.validateToken(token, email)) {
+                var data = new java.util.HashMap<String, Object>();
+                data.put("email", email);
+                data.put("role", role);
+
+                return ResponseEntity.ok(new ApiResponse(true, "Token is valid", data));
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponse(false, "Invalid or expired token"));
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(new ApiResponse(false, "Token validation failed: " + e.getMessage()));
         }
-        return "************" + cardNumber.substring(cardNumber.length() - 4);
     }
 }
