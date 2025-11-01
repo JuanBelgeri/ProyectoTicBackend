@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication(exclude = {SecurityAutoConfiguration.class, ManagementWebSecurityAutoConfiguration.class})
 @EnableJpaRepositories(basePackages = "repository")
-@ComponentScan(basePackages = {"controller", "service", "config", "com.pizzumhamburgum.pizzburgum_backend"})
+@ComponentScan(basePackages = {"controller", "service", "config", "security", "com.pizzumhamburgum.pizzburgum_backend"})
 @EntityScan(basePackages = "model")
 public class PizzburgumBackendApplication {
 
