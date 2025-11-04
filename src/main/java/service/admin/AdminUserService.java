@@ -48,7 +48,7 @@ public class AdminUserService {
         return userRepository.findByEmail(email);
     }
 
-    // Update user status (activate/deactivate)
+    // Update user status
     public User updateUserStatus(String email, Boolean active) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
