@@ -120,7 +120,7 @@ public class AuthController {
         }
     }
 
-    // Register new ADMIN (only existing admins can create new admins)
+    // Register new ADMIN
     @PostMapping("/register/admin")
     public ResponseEntity<ApiResponse> registerAdmin(
             @RequestParam String adminEmail,

@@ -99,7 +99,7 @@ public class AdminUserController {
                         .body(new ApiResponse(false, "User not found")));
     }
 
-    // Update user status (activate/deactivate)
+    // Update user status
     @PutMapping("/{email}/status")
     public ResponseEntity<ApiResponse> updateUserStatus(
             @PathVariable String email,

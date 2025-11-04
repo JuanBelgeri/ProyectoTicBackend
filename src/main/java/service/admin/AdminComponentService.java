@@ -34,7 +34,7 @@ public class AdminComponentService {
     @Autowired
     private CondimentRepository condimentRepository;
 
-    // ==================== VALIDATION HELPERS (Business Logic) ====================
+    // VALIDATION HELPERS
 
     private void validateComponentName(String name) {
         if (name == null || name.trim().isEmpty()) {
@@ -48,10 +48,9 @@ public class AdminComponentService {
         }
     }
 
-    // ==================== PIZZA SIZE ====================
+    // PIZZA SIZE
 
     public PizzaSize createPizzaSize(String name, BigDecimal price) {
-        // Business logic validation - all business rules in backend
         validateComponentName(name);
         validateComponentPrice(price);
         PizzaSize pizzaSize = new PizzaSize(name, price);
@@ -62,7 +61,6 @@ public class AdminComponentService {
         PizzaSize pizzaSize = pizzaSizeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pizza size not found"));
 
-        // Business logic validation - all business rules in backend
         if (name != null) {
             validateComponentName(name);
             pizzaSize.setName(name);
@@ -82,7 +80,7 @@ public class AdminComponentService {
         pizzaSizeRepository.deleteById(id);
     }
 
-    // ==================== DOUGH TYPE ====================
+    // DOUGH TYPE
 
     public DoughType createDoughType(String name, BigDecimal price) {
         validateComponentName(name);
@@ -112,7 +110,7 @@ public class AdminComponentService {
         doughTypeRepository.deleteById(id);
     }
 
-    // ==================== SAUCE TYPE ====================
+    // SAUCE TYPE
 
     public SauceType createSauceType(String name, BigDecimal price) {
         validateComponentName(name);
@@ -142,7 +140,7 @@ public class AdminComponentService {
         sauceTypeRepository.deleteById(id);
     }
 
-    // ==================== CHEESE TYPE ====================
+    // CHEESE TYPE
 
     public CheeseType createCheeseType(String name, BigDecimal price) {
         validateComponentName(name);
@@ -172,7 +170,7 @@ public class AdminComponentService {
         cheeseTypeRepository.deleteById(id);
     }
 
-    // ==================== BREAD TYPE ====================
+    // BREAD TYPE
 
     public BreadType createBreadType(String name, BigDecimal price) {
         validateComponentName(name);
@@ -202,7 +200,7 @@ public class AdminComponentService {
         breadTypeRepository.deleteById(id);
     }
 
-    // ==================== MEAT TYPE ====================
+    // MEAT TYPE
 
     public MeatType createMeatType(String name, BigDecimal price) {
         validateComponentName(name);
@@ -232,7 +230,7 @@ public class AdminComponentService {
         meatTypeRepository.deleteById(id);
     }
 
-    // ==================== TOPPING ====================
+    // TOPPING
 
     public Topping createTopping(String name, BigDecimal price) {
         validateComponentName(name);
@@ -262,7 +260,7 @@ public class AdminComponentService {
         toppingRepository.deleteById(id);
     }
 
-    // ==================== CONDIMENT ====================
+    // CONDIMENT
 
     public Condiment createCondiment(String name, BigDecimal price) {
         validateComponentName(name);

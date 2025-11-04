@@ -16,7 +16,7 @@ public class AdminComponentController {
     @Autowired
     private AdminComponentService adminComponentService;
 
-    // ==================== PIZZA SIZES ====================
+    // PIZZA SIZES
 
     @PostMapping("/pizza-sizes")
     public ResponseEntity<ApiResponse> createPizzaSize(@RequestBody CreateComponentRequest request) {
@@ -58,7 +58,7 @@ public class AdminComponentController {
         }
     }
 
-    // ==================== DOUGH TYPES ====================
+    // DOUGH TYPES
 
     @PostMapping("/dough-types")
     public ResponseEntity<ApiResponse> createDoughType(@RequestBody CreateComponentRequest request) {
@@ -100,7 +100,7 @@ public class AdminComponentController {
         }
     }
 
-    // ==================== SAUCE TYPES ====================
+    // SAUCE TYPES
 
     @PostMapping("/sauce-types")
     public ResponseEntity<ApiResponse> createSauceType(@RequestBody CreateComponentRequest request) {
@@ -142,7 +142,7 @@ public class AdminComponentController {
         }
     }
 
-    // ==================== CHEESE TYPES ====================
+    // CHEESE TYPES
 
     @PostMapping("/cheese-types")
     public ResponseEntity<ApiResponse> createCheeseType(@RequestBody CreateComponentRequest request) {
@@ -184,7 +184,7 @@ public class AdminComponentController {
         }
     }
 
-    // ==================== BREAD TYPES ====================
+    // BREAD TYPES
 
     @PostMapping("/bread-types")
     public ResponseEntity<ApiResponse> createBreadType(@RequestBody CreateComponentRequest request) {
@@ -226,7 +226,7 @@ public class AdminComponentController {
         }
     }
 
-    // ==================== MEAT TYPES ====================
+    // MEAT TYPES
 
     @PostMapping("/meat-types")
     public ResponseEntity<ApiResponse> createMeatType(@RequestBody CreateComponentRequest request) {
@@ -268,7 +268,7 @@ public class AdminComponentController {
         }
     }
 
-    // ==================== TOPPINGS ====================
+    // TOPPINGS
 
     @PostMapping("/toppings")
     public ResponseEntity<ApiResponse> createTopping(@RequestBody CreateComponentRequest request) {
@@ -310,7 +310,7 @@ public class AdminComponentController {
         }
     }
 
-    // ==================== CONDIMENTS ====================
+    // CONDIMENTS
 
     @PostMapping("/condiments")
     public ResponseEntity<ApiResponse> createCondiment(@RequestBody CreateComponentRequest request) {
