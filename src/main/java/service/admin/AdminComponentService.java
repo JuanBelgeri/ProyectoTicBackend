@@ -34,9 +34,26 @@ public class AdminComponentService {
     @Autowired
     private CondimentRepository condimentRepository;
 
+    // ==================== VALIDATION HELPERS (Business Logic) ====================
+
+    private void validateComponentName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Name cannot be empty");
+        }
+    }
+
+    private void validateComponentPrice(BigDecimal price) {
+        if (price == null || price.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Price must be non-negative");
+        }
+    }
+
     // ==================== PIZZA SIZE ====================
 
     public PizzaSize createPizzaSize(String name, BigDecimal price) {
+        // Business logic validation - all business rules in backend
+        validateComponentName(name);
+        validateComponentPrice(price);
         PizzaSize pizzaSize = new PizzaSize(name, price);
         return pizzaSizeRepository.save(pizzaSize);
     }
@@ -45,9 +62,18 @@ public class AdminComponentService {
         PizzaSize pizzaSize = pizzaSizeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pizza size not found"));
 
-        if (name != null) pizzaSize.setName(name);
-        if (price != null) pizzaSize.setPrice(price);
-        if (active != null) pizzaSize.setActive(active);
+        // Business logic validation - all business rules in backend
+        if (name != null) {
+            validateComponentName(name);
+            pizzaSize.setName(name);
+        }
+        if (price != null) {
+            validateComponentPrice(price);
+            pizzaSize.setPrice(price);
+        }
+        if (active != null) {
+            pizzaSize.setActive(active);
+        }
 
         return pizzaSizeRepository.save(pizzaSize);
     }
@@ -59,6 +85,8 @@ public class AdminComponentService {
     // ==================== DOUGH TYPE ====================
 
     public DoughType createDoughType(String name, BigDecimal price) {
+        validateComponentName(name);
+        validateComponentPrice(price);
         DoughType doughType = new DoughType(name, price);
         return doughTypeRepository.save(doughType);
     }
@@ -67,8 +95,14 @@ public class AdminComponentService {
         DoughType doughType = doughTypeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Dough type not found"));
 
-        if (name != null) doughType.setName(name);
-        if (price != null) doughType.setPrice(price);
+        if (name != null) {
+            validateComponentName(name);
+            doughType.setName(name);
+        }
+        if (price != null) {
+            validateComponentPrice(price);
+            doughType.setPrice(price);
+        }
         if (active != null) doughType.setActive(active);
 
         return doughTypeRepository.save(doughType);
@@ -81,6 +115,8 @@ public class AdminComponentService {
     // ==================== SAUCE TYPE ====================
 
     public SauceType createSauceType(String name, BigDecimal price) {
+        validateComponentName(name);
+        validateComponentPrice(price);
         SauceType sauceType = new SauceType(name, price);
         return sauceTypeRepository.save(sauceType);
     }
@@ -89,8 +125,14 @@ public class AdminComponentService {
         SauceType sauceType = sauceTypeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Sauce type not found"));
 
-        if (name != null) sauceType.setName(name);
-        if (price != null) sauceType.setPrice(price);
+        if (name != null) {
+            validateComponentName(name);
+            sauceType.setName(name);
+        }
+        if (price != null) {
+            validateComponentPrice(price);
+            sauceType.setPrice(price);
+        }
         if (active != null) sauceType.setActive(active);
 
         return sauceTypeRepository.save(sauceType);
@@ -103,6 +145,8 @@ public class AdminComponentService {
     // ==================== CHEESE TYPE ====================
 
     public CheeseType createCheeseType(String name, BigDecimal price) {
+        validateComponentName(name);
+        validateComponentPrice(price);
         CheeseType cheeseType = new CheeseType(name, price);
         return cheeseTypeRepository.save(cheeseType);
     }
@@ -111,8 +155,14 @@ public class AdminComponentService {
         CheeseType cheeseType = cheeseTypeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Cheese type not found"));
 
-        if (name != null) cheeseType.setName(name);
-        if (price != null) cheeseType.setPrice(price);
+        if (name != null) {
+            validateComponentName(name);
+            cheeseType.setName(name);
+        }
+        if (price != null) {
+            validateComponentPrice(price);
+            cheeseType.setPrice(price);
+        }
         if (active != null) cheeseType.setActive(active);
 
         return cheeseTypeRepository.save(cheeseType);
@@ -125,6 +175,8 @@ public class AdminComponentService {
     // ==================== BREAD TYPE ====================
 
     public BreadType createBreadType(String name, BigDecimal price) {
+        validateComponentName(name);
+        validateComponentPrice(price);
         BreadType breadType = new BreadType(name, price);
         return breadTypeRepository.save(breadType);
     }
@@ -133,8 +185,14 @@ public class AdminComponentService {
         BreadType breadType = breadTypeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Bread type not found"));
 
-        if (name != null) breadType.setName(name);
-        if (price != null) breadType.setPrice(price);
+        if (name != null) {
+            validateComponentName(name);
+            breadType.setName(name);
+        }
+        if (price != null) {
+            validateComponentPrice(price);
+            breadType.setPrice(price);
+        }
         if (active != null) breadType.setActive(active);
 
         return breadTypeRepository.save(breadType);
@@ -147,6 +205,8 @@ public class AdminComponentService {
     // ==================== MEAT TYPE ====================
 
     public MeatType createMeatType(String name, BigDecimal price) {
+        validateComponentName(name);
+        validateComponentPrice(price);
         MeatType meatType = new MeatType(name, price);
         return meatTypeRepository.save(meatType);
     }
@@ -155,8 +215,14 @@ public class AdminComponentService {
         MeatType meatType = meatTypeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Meat type not found"));
 
-        if (name != null) meatType.setName(name);
-        if (price != null) meatType.setPrice(price);
+        if (name != null) {
+            validateComponentName(name);
+            meatType.setName(name);
+        }
+        if (price != null) {
+            validateComponentPrice(price);
+            meatType.setPrice(price);
+        }
         if (active != null) meatType.setActive(active);
 
         return meatTypeRepository.save(meatType);
@@ -169,6 +235,8 @@ public class AdminComponentService {
     // ==================== TOPPING ====================
 
     public Topping createTopping(String name, BigDecimal price) {
+        validateComponentName(name);
+        validateComponentPrice(price);
         Topping topping = new Topping(name, price);
         return toppingRepository.save(topping);
     }
@@ -177,8 +245,14 @@ public class AdminComponentService {
         Topping topping = toppingRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Topping not found"));
 
-        if (name != null) topping.setName(name);
-        if (price != null) topping.setPrice(price);
+        if (name != null) {
+            validateComponentName(name);
+            topping.setName(name);
+        }
+        if (price != null) {
+            validateComponentPrice(price);
+            topping.setPrice(price);
+        }
         if (active != null) topping.setActive(active);
 
         return toppingRepository.save(topping);
@@ -191,6 +265,8 @@ public class AdminComponentService {
     // ==================== CONDIMENT ====================
 
     public Condiment createCondiment(String name, BigDecimal price) {
+        validateComponentName(name);
+        validateComponentPrice(price);
         Condiment condiment = new Condiment(name, price);
         return condimentRepository.save(condiment);
     }
@@ -199,8 +275,14 @@ public class AdminComponentService {
         Condiment condiment = condimentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Condiment not found"));
 
-        if (name != null) condiment.setName(name);
-        if (price != null) condiment.setPrice(price);
+        if (name != null) {
+            validateComponentName(name);
+            condiment.setName(name);
+        }
+        if (price != null) {
+            validateComponentPrice(price);
+            condiment.setPrice(price);
+        }
         if (active != null) condiment.setActive(active);
 
         return condimentRepository.save(condiment);

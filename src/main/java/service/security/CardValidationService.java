@@ -63,7 +63,7 @@ public class CardValidationService {
     }
 
     // Validate card number using Luhn algorithm
-    private boolean isValidCardNumber(String cardNumber) {
+    public boolean isValidCardNumber(String cardNumber) {
         if (cardNumber == null || cardNumber.length() < 13 || cardNumber.length() > 19) {
             return false;
         }
