@@ -47,6 +47,11 @@ public class PaymentMethodService {
         method.setCardHolder(updatedMethod.getCardHolder());
         method.setExpirationDate(updatedMethod.getExpirationDate());
 
+        // Update card number if provided
+        if (updatedMethod.getCardNumberEncrypted() != null) {
+            method.setCardNumberEncrypted(updatedMethod.getCardNumberEncrypted());
+        }
+
         if (updatedMethod.getIsMain() && !method.getIsMain()) {
             // Unset other main payment methods
             List<PaymentMethod> mainMethods = paymentMethodRepository.findByUserEmail(method.getUserEmail());

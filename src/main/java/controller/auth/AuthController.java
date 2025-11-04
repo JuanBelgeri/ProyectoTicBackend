@@ -6,7 +6,6 @@ import model.users.User;
 import model.users.Address;
 import model.users.PaymentMethod;
 import model.enums.UserRole;
-import service.admin.AdminUserService;
 import service.users.UserService;
 import service.users.AddressService;
 import service.users.PaymentMethodService;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -43,9 +41,6 @@ public class AuthController {
 
     @Autowired
     private JwtUtil jwtUtil;
-
-    @Autowired
-    private AdminUserService adminUserService;
 
     // Register new CLIENT
     @PostMapping("/register/client")
@@ -125,42 +120,23 @@ public class AuthController {
         }
     }
 
-    // Register new ADMIN
-    // Register new ADMIN (only existing admins can create new admins, or create first admin)
+    // Register new ADMIN (only existing admins can create new admins)
     @PostMapping("/register/admin")
     public ResponseEntity<ApiResponse> registerAdmin(
-            @RequestParam(required = false) String adminEmail,
+            @RequestParam String adminEmail,
             @RequestBody RegisterAdminRequest request) {
         try {
-            // Check if there are any existing admins
-            long adminCount = adminUserService.getUserCountByRole(UserRole.ADMIN);
+            // Verify that the requester is an admin
+            Optional<User> adminOpt = userService.getUserByEmail(adminEmail);
+            if (adminOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body(new ApiResponse(false, "Admin user not found"));
+            }
 
-            // If no admins exist, allow creating the first one without validation
-            if (adminCount == 0) {
-                // First admin creation - no validation needed
-                if (userService.userExists(request.getEmail())) {
-                    return ResponseEntity.status(HttpStatus.CONFLICT)
-                            .body(new ApiResponse(false, "Email already registered"));
-                }
-            } else {
-                // There are existing admins - require validation
-                if (adminEmail == null || adminEmail.trim().isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(new ApiResponse(false, "adminEmail parameter is required when admins already exist"));
-                }
-
-                // Verify that the requester is an admin
-                Optional<User> adminOpt = userService.getUserByEmail(adminEmail);
-                if (adminOpt.isEmpty()) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                            .body(new ApiResponse(false, "Admin user not found"));
-                }
-
-                User adminUser = adminOpt.get();
-                if (adminUser.getRole() != UserRole.ADMIN || !adminUser.getActive()) {
-                    return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                            .body(new ApiResponse(false, "Only active administrators can register new admins"));
-                }
+            User adminUser = adminOpt.get();
+            if (adminUser.getRole() != UserRole.ADMIN || !adminUser.getActive()) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(new ApiResponse(false, "Only active administrators can register new admins"));
             }
 
             if (userService.userExists(request.getEmail())) {

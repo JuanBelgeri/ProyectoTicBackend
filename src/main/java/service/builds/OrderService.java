@@ -107,7 +107,7 @@ public class OrderService {
         return orderRepository.findByUserEmailOrderByOrderDateDesc(userEmail);
     }
 
-    // Get all orders (for admin)
+    // Get all orders (for admin) - includes all orders including cancelled
     public List<Order> getAllOrders() {
         return orderRepository.findAllByOrderByOrderDateDesc();
     }
