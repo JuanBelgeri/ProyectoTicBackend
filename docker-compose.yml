@@ -14,5 +14,19 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  app:
+    build: .
+    container_name: pizzum-app
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/pizzum_db
+      SPRING_DATASOURCE_USERNAME: pizzum_user
+      SPRING_DATASOURCE_PASSWORD: pizzum_pass
+      # Optional: if you use JPA
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+
 volumes:
   postgres_data:
