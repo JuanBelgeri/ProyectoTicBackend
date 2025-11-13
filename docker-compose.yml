@@ -25,6 +25,7 @@ services:
       SPRING_DATASOURCE_PASSWORD: pizzum_pass
       # Optional: if you use JPA
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SERVER_PORT: 8080
     ports:
       - "8080:8080"
 
