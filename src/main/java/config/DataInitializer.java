@@ -1,10 +1,16 @@
 package config;
 
 import model.components.*;
+import model.enums.UserRole;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import repository.components.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import repository.users.UserRepository;
+import model.users.User;
+
+
 import java.math.BigDecimal;
 
 @Component
@@ -33,6 +39,12 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private CondimentRepository condimentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
@@ -116,6 +128,37 @@ public class DataInitializer implements CommandLineRunner {
             condimentRepository.save(new Condiment("Ranch", new BigDecimal("0.75")));
             condimentRepository.save(new Condiment("Picante", new BigDecimal("0.50")));
             System.out.println("✅ Condiments created");
+        }
+        // Initial Admin User (only if no admins exist)
+        long adminCount = userRepository.findAll().stream()
+                .filter(user -> user.getRole() == UserRole.ADMIN)
+                .count();
+
+        if (adminCount == 0) {
+            String adminEmail = System.getenv().getOrDefault("ADMIN_EMAIL", "admin@pizzum.com");
+            String adminPassword = System.getenv().getOrDefault("ADMIN_PASSWORD", "admin123");
+
+            // Check if admin email already exists (as a client)
+            if (!userRepository.existsByEmail(adminEmail)) {
+                String encryptedPassword = passwordEncoder.encode(adminPassword);
+                User adminUser = new User(
+                        adminEmail,
+                        "Admin",
+                        "User",
+                        null,
+                        null,
+                        null,
+                        UserRole.ADMIN,
+                        encryptedPassword
+                );
+                userRepository.save(adminUser);
+                System.out.println("✅ Initial admin user created: " + adminEmail);
+                System.out.println("⚠️  Default password: " + adminPassword + " (change this in production!)");
+            } else {
+                System.out.println("⚠️  Admin email already exists as a different role: " + adminEmail);
+            }
+        } else {
+            System.out.println("✅ Admin users already exist (" + adminCount + " found)");
         }
 
         System.out.println("✅ Database initialization completed!");
