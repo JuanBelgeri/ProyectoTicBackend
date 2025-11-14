@@ -24,13 +24,14 @@ public class IntegrationController {
     public ResponseEntity<Map<String, Object>> getSalesTicketsByDate(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         try {
-            var tickets = integrationService.getSalesTicketsByDate(date);
+            var result = integrationService.getSalesTicketsByDate(date);
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("consultDate", date);
-            response.put("totalTickets", tickets.size());
-            response.put("tickets", tickets);
+            response.put("totalOrders", result.get("totalOrders"));
+            response.put("totalRevenue", result.get("totalRevenue"));
+            response.put("orders", result.get("orders"));
 
             return ResponseEntity.ok(response);
 
@@ -53,14 +54,16 @@ public class IntegrationController {
 
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
-            response.put("data", employeeData);
+            response.put("employees", employeeData.get("employees"));
+            response.put("totalActiveEmployees", employeeData.get("totalActiveEmployees"));
+            response.put("consultDate", employeeData.get("consultDate"));
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("success", false);
-            errorResponse.put("error", "Error al obtener cantidad de empleados: " + e.getMessage());
+            errorResponse.put("error", "Error al obtener información de empleados: " + e.getMessage());
 
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(errorResponse);
