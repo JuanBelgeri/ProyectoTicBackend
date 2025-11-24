@@ -59,6 +59,13 @@ public class ComponentController {
         return ResponseEntity.ok(new ApiResponse(true, "Meat types retrieved", meats));
     }
 
+    // Get all meat amounts
+    @GetMapping("/meat-amounts")
+    public ResponseEntity<ApiResponse> getMeatAmounts() {
+        List<MeatAmount> amounts = componentService.getAllActiveMeatAmounts();
+        return ResponseEntity.ok(new ApiResponse(true, "Meat amounts retrieved", amounts));
+    }
+
     // Get all toppings
     @GetMapping("/toppings")
     public ResponseEntity<ApiResponse> getToppings() {
@@ -83,6 +90,7 @@ public class ComponentController {
         components.put("cheeseTypes", componentService.getAllActiveCheeseTypes());
         components.put("breadTypes", componentService.getAllActiveBreadTypes());
         components.put("meatTypes", componentService.getAllActiveMeatTypes());
+        components.put("meatAmounts", componentService.getAllActiveMeatAmounts());
         components.put("toppings", componentService.getAllActiveToppings());
         components.put("condiments", componentService.getAllActiveCondiments());
 

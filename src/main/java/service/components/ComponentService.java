@@ -30,6 +30,9 @@ public class ComponentService {
     private MeatTypeRepository meatTypeRepository;
 
     @Autowired
+    private MeatAmountRepository meatAmountRepository;
+
+    @Autowired
     private ToppingRepository toppingRepository;
 
     @Autowired
@@ -83,6 +86,11 @@ public class ComponentService {
     // Meat Types
     public List<MeatType> getAllActiveMeatTypes() {
         return meatTypeRepository.findByActiveTrue();
+    }
+
+    // Meat Amounts
+    public List<MeatAmount> getAllActiveMeatAmounts() {
+        return meatAmountRepository.findByActiveTrue();
     }
 
     public MeatType createMeatType(MeatType meatType) {

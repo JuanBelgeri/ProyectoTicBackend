@@ -86,8 +86,7 @@ public class OrderService {
                     itemName,
                     itemDescription,
                     cartItem.getQuantity(),
-                    cartItem.getUnitPrice()
-            );
+                    cartItem.getUnitPrice());
             orderItemRepository.save(orderItem);
         }
 
@@ -196,10 +195,13 @@ public class OrderService {
                     String condiments = hamburger.getCondiments().stream()
                             .map(c -> c.getName())
                             .collect(Collectors.joining(", "));
+                    String cheeses = hamburger.getCheeses().stream()
+                            .map(c -> c.getName())
+                            .collect(Collectors.joining(", "));
                     return String.format("Pan: %s, Carne: %s, Queso: %s, Toppings: %s, Aderezos: %s",
                             hamburger.getBread().getName(),
                             hamburger.getMeat().getName(),
-                            hamburger.getCheese() != null ? hamburger.getCheese().getName() : "Sin queso",
+                            cheeses.isEmpty() ? "Sin queso" : cheeses,
                             toppings.isEmpty() ? "Sin toppings" : toppings,
                             condiments.isEmpty() ? "Sin aderezos" : condiments);
                 }

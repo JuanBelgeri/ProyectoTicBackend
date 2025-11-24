@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import repository.users.UserRepository;
 import model.users.User;
 
-
 import java.math.BigDecimal;
 
 @Component
@@ -33,6 +32,9 @@ public class DataInitializer implements CommandLineRunner {
 
     @Autowired
     private MeatTypeRepository meatTypeRepository;
+
+    @Autowired
+    private MeatAmountRepository meatAmountRepository;
 
     @Autowired
     private ToppingRepository toppingRepository;
@@ -104,6 +106,14 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("✅ Meat types created");
         }
 
+        // Meat Amounts
+        if (meatAmountRepository.count() == 0) {
+            meatAmountRepository.save(new MeatAmount("Simple", BigDecimal.ZERO));
+            meatAmountRepository.save(new MeatAmount("Doble", new BigDecimal("2.00")));
+            meatAmountRepository.save(new MeatAmount("Triple", new BigDecimal("4.00")));
+            System.out.println("✅ Meat amounts created");
+        }
+
         // Toppings
         if (toppingRepository.count() == 0) {
             toppingRepository.save(new Topping("Jamón", new BigDecimal("1.50")));
@@ -149,8 +159,7 @@ public class DataInitializer implements CommandLineRunner {
                         null,
                         null,
                         UserRole.ADMIN,
-                        encryptedPassword
-                );
+                        encryptedPassword);
                 userRepository.save(adminUser);
                 System.out.println("✅ Initial admin user created: " + adminEmail);
                 System.out.println("⚠️  Default password: " + adminPassword + " (change this in production!)");

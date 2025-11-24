@@ -12,6 +12,7 @@ public class HamburgerResponse {
     private String name;
     private String breadName;
     private String meatName;
+    private String meatAmountName;
     private String cheeseName;
     private String toppings; // Comma-separated
     private String condiments; // Comma-separated

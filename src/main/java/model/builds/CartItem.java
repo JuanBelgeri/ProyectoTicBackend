@@ -36,6 +36,9 @@ public class CartItem {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal subtotal;
 
+    @Column(nullable = false)
+    private Boolean priceUpdated;
+
     // Constructor
     public CartItem(Long cartId, String itemType, Long itemId, Integer quantity, BigDecimal unitPrice) {
         this.cartId = cartId;
@@ -43,6 +46,7 @@ public class CartItem {
         this.itemId = itemId;
         this.quantity = quantity;
         this.unitPrice = unitPrice;
+        this.priceUpdated = false;
         calculateSubtotal();
     }
 

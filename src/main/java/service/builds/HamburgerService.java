@@ -59,7 +59,7 @@ public class HamburgerService {
         hamburger.setName(updatedHamburger.getName());
         hamburger.setBread(updatedHamburger.getBread());
         hamburger.setMeat(updatedHamburger.getMeat());
-        hamburger.setCheese(updatedHamburger.getCheese());
+        hamburger.setCheeses(updatedHamburger.getCheeses());
         hamburger.setToppings(updatedHamburger.getToppings());
         hamburger.setCondiments(updatedHamburger.getCondiments());
         hamburger.setUpdatedAt(LocalDateTime.now());
