@@ -14,8 +14,8 @@ public class HamburgerResponse {
     private String meatName;
     private String meatAmountName;
     private String cheeseName;
-    private String toppings; // Comma-separated
-    private String condiments; // Comma-separated
+    private String toppings;
+    private String condiments;
     private BigDecimal totalPrice;
     private LocalDateTime createdAt;
 }

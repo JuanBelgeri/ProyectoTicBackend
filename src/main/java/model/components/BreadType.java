@@ -18,7 +18,7 @@ public class BreadType {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name; // CAMBIO: String en vez de Enum
+    private String name;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;

@@ -14,7 +14,7 @@ public class PizzaResponse {
     private String doughName;
     private String sauceName;
     private String cheeseName;
-    private String toppings; // Comma-separated
+    private String toppings;
     private BigDecimal totalPrice;
     private LocalDateTime createdAt;
 }

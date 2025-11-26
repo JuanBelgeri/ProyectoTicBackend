@@ -31,7 +31,7 @@ public class UserController {
     @Autowired
     private CardValidationService cardValidationService;
 
-    // ============ ADDRESSES ============
+    // ADDRESSES
 
     // Get all addresses for user
     @GetMapping("/addresses")
@@ -160,7 +160,7 @@ public class UserController {
         }
     }
 
-    // ============ PAYMENT METHODS ============
+    // PAYMENT METHODS
 
     // Get all payment methods for user
     @GetMapping("/payments")

@@ -18,7 +18,7 @@ public class IntegrationController {
     @Autowired
     private IntegrationService integrationService;
 
-    // ==================== DGI API ====================
+    // DGI API
 
     @GetMapping("/dgi/sales-tickets")
     public ResponseEntity<Map<String, Object>> getSalesTicketsByDate(
@@ -45,7 +45,7 @@ public class IntegrationController {
         }
     }
 
-    // ==================== BPS API ====================
+    // BPS API
 
     @GetMapping("/bps/employee-count")
     public ResponseEntity<Map<String, Object>> getEmployeeCount() {
@@ -93,15 +93,4 @@ public class IntegrationController {
         }
     }
 
-    // ==================== HEALTH CHECK ====================
-
-    @GetMapping("/health")
-    public ResponseEntity<Map<String, Object>> healthCheck() {
-        Map<String, Object> response = new HashMap<>();
-        response.put("status", "UP");
-        response.put("service", "Integration API");
-        response.put("timestamp", java.time.LocalDateTime.now());
-
-        return ResponseEntity.ok(response);
-    }
 }
